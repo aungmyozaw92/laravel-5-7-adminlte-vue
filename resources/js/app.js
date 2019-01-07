@@ -9,21 +9,31 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-window.Form = Form;
-import { Form, HasError, AlertError } from 'vform'
+require('froala-editor/js/froala_editor.pkgd.min')
 
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
+// Require Froala Editor css files.
+require('froala-editor/css/froala_editor.pkgd.min.css')
+require('font-awesome/css/font-awesome.css')
+require('froala-editor/css/froala_style.min.css')
 
 import VueRouter from 'vue-router'
+import Vuex from 'vuex';
+import {routes} from './routes';
+import StoreData from './store';
+import DateFilter from './filters/date'
+import VueSweetalert2 from 'vue-sweetalert2';
 
-Vue.use(VueRouter)
 
-let routes = [
-  { path: '/dashboard', component: require('./components/Dashboard.vue') },
-  { path: '/profile', component: require('./components/Profile.vue') },
-  { path: '/users', component: require('./components/users/Users.vue') }
-]
+// Import and use Vue Froala lib.
+import VueFroala from 'vue-froala-wysiwyg'
+
+Vue.use(VueRouter);
+Vue.use(Vuex);
+Vue.use(VueFroala)
+Vue.filter('date', DateFilter)
+Vue.use(VueSweetalert2);
+
+const store = new Vuex.Store(StoreData);
 
 // keep it simple for now.
 const router = new VueRouter({
@@ -31,15 +41,23 @@ const router = new VueRouter({
   routes 
 })
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue')
+);
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue')
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue')
+);
 
 const app = new Vue({
     el: '#app' ,
-    router
+    router,
+    store
 });
